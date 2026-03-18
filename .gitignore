@@ -1,2 +1,13 @@
 node_modules/
 coverage/
+
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+
+# Environment files (contain secrets)
+frontend/.env
+lambda/.env
+
+# Lambda dependencies (installed during deploy)
+lambda/node_modules/
