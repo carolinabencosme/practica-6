@@ -11,6 +11,9 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: !Ref ReservasTable
+        # UTC offset for the university timezone (e.g. -5 for UTC-5, 0 for UTC).
+        # Adjust this when deploying so active-reservation filtering uses local time.
+        TABLE_TZ_OFFSET: "0"
   Api:
     Cors:
       AllowMethods: "'GET,POST,OPTIONS'"

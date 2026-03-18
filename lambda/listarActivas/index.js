@@ -21,8 +21,12 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: CORS_HEADERS, body: '' };
   }
 
-  // Determine "today" in YYYY-MM-DD
-  const now = new Date();
+  // Determine "today" in YYYY-MM-DD.
+  // NOTE: reservation hours are stored as local university hours (0-based, e.g. 8 = 8 AM).
+  // Set the TABLE_TZ_OFFSET environment variable to the UTC offset of the university timezone
+  // (e.g. "-5" for UTC-5, "0" for UTC). Defaults to UTC (0).
+  const tzOffset = parseInt(process.env.TABLE_TZ_OFFSET || '0', 10);
+  const now = new Date(Date.now() + tzOffset * 3600000);
   const todayStr = now.toISOString().slice(0, 10);
   const currentHour = now.getUTCHours();
 
