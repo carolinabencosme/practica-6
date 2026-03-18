@@ -1,0 +1,130 @@
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f0f4f8;
+  color: #1a202c;
+  min-height: 100vh;
+}
+
+/* ===== Layout ===== */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.app-header {
+  background: linear-gradient(135deg, #2b6cb0, #2c5282);
+  color: white;
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+.app-header h1 { font-size: 1.75rem; }
+.app-subtitle { font-size: 0.9rem; opacity: 0.8; margin-top: 0.25rem; }
+
+/* ===== Tabs ===== */
+.tab-nav {
+  display: flex;
+  gap: 0.25rem;
+  background: #2c5282;
+  padding: 0 2rem;
+  overflow-x: auto;
+}
+.tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: rgba(255,255,255,0.75);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.25rem;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+.tab-btn.active { color: white; border-bottom-color: #63b3ed; font-weight: 600; }
+
+/* ===== Main ===== */
+.app-main { flex: 1; padding: 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
+
+/* ===== Card ===== */
+.card {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  padding: 1.75rem;
+}
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+.card h2 { font-size: 1.25rem; color: #2d3748; margin-bottom: 1.25rem; }
+.card-header h2 { margin-bottom: 0; }
+
+/* ===== Form ===== */
+.form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+.form-group label { font-size: 0.875rem; font-weight: 600; color: #4a5568; }
+.form-group input,
+.form-group select {
+  border: 1px solid #cbd5e0;
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.75rem;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4299e1;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66,153,225,0.15);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.range-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end; margin-bottom: 1.25rem; }
+.range-form .form-group { margin-bottom: 0; }
+
+/* ===== Buttons ===== */
+.btn {
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.55rem 1.25rem;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+.btn:disabled { cursor: not-allowed; opacity: 0.6; }
+.btn-primary { background: #3182ce; color: white; }
+.btn-primary:hover:not(:disabled) { background: #2b6cb0; }
+.btn-secondary { background: #edf2f7; color: #4a5568; }
+.btn-secondary:hover:not(:disabled) { background: #e2e8f0; }
+
+/* ===== Alerts ===== */
+.alert { border-radius: 0.4rem; margin-bottom: 1rem; padding: 0.75rem 1rem; font-size: 0.9rem; }
+.alert ul { margin: 0.4rem 0 0 1.25rem; }
+.alert li { margin: 0.2rem 0; }
+.alert-success { background: #c6f6d5; border-left: 4px solid #38a169; color: #276749; }
+.alert-error   { background: #fed7d7; border-left: 4px solid #e53e3e; color: #9b2c2c; }
+
+/* ===== Table ===== */
+.table-wrapper { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 0.875rem; width: 100%; }
+thead tr { background: #ebf4ff; }
+th { color: #2b6cb0; font-weight: 700; padding: 0.65rem 1rem; text-align: left; white-space: nowrap; }
+td { border-top: 1px solid #e2e8f0; padding: 0.6rem 1rem; }
+tbody tr:hover { background: #f7fafc; }
+
+.empty-state { color: #718096; font-size: 0.9rem; padding: 1rem 0; text-align: center; }
+.result-count { color: #4a5568; font-size: 0.85rem; margin-bottom: 0.75rem; }
+
+/* ===== Footer ===== */
+.app-footer {
+  background: #2d3748;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  .app-main { padding: 1rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .range-form { grid-template-columns: 1fr; }
+}

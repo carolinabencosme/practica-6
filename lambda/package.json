@@ -1,0 +1,14 @@
+{
+  "name": "practica-6-lambda",
+  "version": "1.0.0",
+  "description": "Lambda functions for lab reservation system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No unit tests for Lambda handlers (integration tests require AWS)\""
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  },
+  "license": "ISC"
+}
