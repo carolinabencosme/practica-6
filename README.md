@@ -68,6 +68,7 @@ Tabla **`Reservas`**
 - Máximo **7 personas por hora** por laboratorio.
 - Horarios válidos: **8:00 AM a 10:00 PM** (slots de 1 hora: 8, 9, …, 22).
 - No se pueden crear reservas para fechas pasadas.
+- Una **reserva pasada** es cualquier reserva con fecha anterior a hoy, o una reserva del día actual cuyo slot ya terminó (si la reserva empieza a las 14:00, pasa a historial desde las 15:00).
 - Todos los campos son obligatorios; el correo debe tener formato válido.
 
 ---
@@ -162,7 +163,7 @@ La app quedará disponible en: `https://<tu-usuario>.github.io/practica-6/`
 |--------|---------------------|------------------------------------------|
 | POST   | `/reservas`         | Crear una nueva reserva                  |
 | GET    | `/reservas/activas` | Listar reservas activas (no expiradas)   |
-| GET    | `/reservas/rango`   | Listar reservas por rango de fechas      |
+| GET    | `/reservas/rango`   | Listar reservas pasadas por rango de fechas |
 
 ### POST `/reservas` – cuerpo JSON
 
@@ -178,6 +179,8 @@ La app quedará disponible en: `https://<tu-usuario>.github.io/practica-6/`
 ```
 
 ### GET `/reservas/rango` – query params
+
+Devuelve únicamente reservas pasadas dentro del rango solicitado. No incluye reservas activas ni futuras.
 
 ```
 ?fechaDesde=2025-01-01&fechaHasta=2025-01-31
@@ -200,4 +203,4 @@ sam delete
 |---------|-------------|
 | Nueva Reserva | Formulario con validaciones en tiempo real |
 | Reservas Activas | Tabla de reservas vigentes con botón de actualizar |
-| Reservas Pasadas | Búsqueda por rango de fechas con resultados en tabla |
+| Reservas Pasadas | Consulta de historial por rango de fechas con resultados en tabla |
