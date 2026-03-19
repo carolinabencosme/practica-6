@@ -70,6 +70,23 @@ Tabla **`Reservas`**
 - No se pueden crear reservas para fechas pasadas.
 - Una **reserva pasada** es cualquier reserva con fecha anterior a hoy, o una reserva del día actual cuyo slot ya terminó (si la reserva empieza a las 14:00, pasa a historial desde las 15:00).
 - Todos los campos son obligatorios; el correo debe tener formato válido.
+- La zona horaria oficial del sistema la define el backend mediante `TABLE_TZ_OFFSET`; frontend y backend deben usar ese criterio al interpretar "hoy" y el estado activa/pasada.
+
+---
+
+## Zona horaria oficial del sistema
+
+- La zona horaria oficial se configura en el backend con la variable de entorno `TABLE_TZ_OFFSET`, expresada como desplazamiento entero respecto a UTC.
+- El valor por defecto actual es `0`, es decir, **UTC**.
+- Ejemplos: `-5` para UTC-5, `-6` para UTC-6, `1` para UTC+1.
+- Las Lambdas usan esa configuración para calcular "hoy", la hora actual y si una reserva está activa o pasada.
+- En el frontend, los campos `input[type="date"]` construyen la fecha local del navegador manualmente para evitar desfases causados por `toISOString()`.
+
+### Cómo configurarla
+
+1. Edita `lambda/template.yaml` y ajusta `TABLE_TZ_OFFSET` en `Globals > Function > Environment > Variables`.
+2. Despliega nuevamente el backend con `sam build && sam deploy`.
+3. Mantén documentado el valor elegido para que el equipo sepa cuál es la referencia oficial de fechas y horarios.
 
 ---
 

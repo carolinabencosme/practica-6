@@ -1,27 +1,15 @@
 import { useMemo, useState } from 'react';
 import { listarPorRango } from '../services/api';
+import { getLocalDateMonthsAgo, getLocalToday } from '../utils/dateUtils';
 
 function formatHora(hora) {
   return `${String(hora).padStart(2, '0')}:00 – ${String(hora + 1).padStart(2, '0')}:00`;
 }
 
-function toDateInputValue(date) {
-  return date.toISOString().slice(0, 10);
-}
-
-function lastMonth() {
-  const d = new Date();
-  d.setMonth(d.getMonth() - 1);
-  return toDateInputValue(d);
-}
-
-function today() {
-  return toDateInputValue(new Date());
-}
 
 export default function PastReservations() {
-  const maxFechaHasta = useMemo(() => today(), []);
-  const [fechaDesde, setFechaDesde] = useState(lastMonth());
+  const maxFechaHasta = useMemo(() => getLocalToday(), []);
+  const [fechaDesde, setFechaDesde] = useState(getLocalDateMonthsAgo(1));
   const [fechaHasta, setFechaHasta] = useState(maxFechaHasta);
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(false);

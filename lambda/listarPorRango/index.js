@@ -2,7 +2,7 @@
 
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, ScanCommand } = require('@aws-sdk/lib-dynamodb');
-const { isReservaPast } = require('../shared/reservaTemporal');
+const { getDateParts, isReservaPast } = require('../shared/dateUtils');
 
 const TABLE_NAME = process.env.TABLE_NAME || 'Reservas';
 
@@ -57,6 +57,8 @@ exports.handler = async (event) => {
     };
   }
 
+  const reference = getDateParts();
+
   const result = await ddb.send(
     new ScanCommand({
       TableName: TABLE_NAME,
@@ -69,7 +71,7 @@ exports.handler = async (event) => {
     })
   );
 
-  const pasadas = (result.Items || []).filter((item) => isReservaPast(item));
+  const pasadas = (result.Items || []).filter((item) => isReservaPast(item, reference));
 
   pasadas.sort((a, b) => {
     if (a.fecha !== b.fecha) return a.fecha < b.fecha ? -1 : 1;

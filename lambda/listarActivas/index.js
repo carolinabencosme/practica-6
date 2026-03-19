@@ -2,7 +2,7 @@
 
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, ScanCommand } = require('@aws-sdk/lib-dynamodb');
-const { getUniversityNow, isReservaActive } = require('../shared/reservaTemporal');
+const { getDateParts, isReservaActive } = require('../shared/dateUtils');
 
 const TABLE_NAME = process.env.TABLE_NAME || 'Reservas';
 
@@ -21,7 +21,8 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: CORS_HEADERS, body: '' };
   }
 
-  const { todayStr } = getUniversityNow();
+  const reference = getDateParts();
+  const { todayStr } = reference;
 
   const result = await ddb.send(
     new ScanCommand({
@@ -32,7 +33,7 @@ exports.handler = async (event) => {
     })
   );
 
-  const activas = (result.Items || []).filter((item) => isReservaActive(item));
+  const activas = (result.Items || []).filter((item) => isReservaActive(item, reference));
 
   activas.sort((a, b) => {
     if (a.fecha !== b.fecha) return a.fecha < b.fecha ? -1 : 1;

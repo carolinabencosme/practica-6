@@ -1,19 +1,16 @@
 import { useState } from 'react';
 import { crearReserva } from '../services/api';
+import { getLocalToday } from '../utils/dateUtils';
 
 const LABS = ['Lab 1', 'Lab 2', 'Lab 3', 'Lab 4'];
 const HOURS = Array.from({ length: 15 }, (_, i) => i + 8); // 8..22
-
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default function ReservationForm() {
   const [form, setForm] = useState({
     correo: '',
     nombre: '',
     id: '',
-    fecha: today(),
+    fecha: getLocalToday(),
     hora: 8,
     laboratorio: LABS[0],
   });
@@ -33,7 +30,7 @@ export default function ReservationForm() {
       const result = await crearReserva(form);
       if (result.success) {
         setStatus({ type: 'success', message: result.message });
-        setForm({ correo: '', nombre: '', id: '', fecha: today(), hora: 8, laboratorio: LABS[0] });
+        setForm({ correo: '', nombre: '', id: '', fecha: getLocalToday(), hora: 8, laboratorio: LABS[0] });
       } else {
         setStatus({ type: 'error', message: result.message, errors: result.errors });
       }
@@ -104,7 +101,7 @@ export default function ReservationForm() {
               name="fecha"
               type="date"
               value={form.fecha}
-              min={today()}
+              min={getLocalToday()}
               onChange={handleChange}
               required
             />
