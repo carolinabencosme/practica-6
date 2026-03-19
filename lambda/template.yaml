@@ -43,20 +43,9 @@ Resources:
       AttributeDefinitions:
         - AttributeName: idReserva
           AttributeType: S
-        - AttributeName: labFechaHora
-          AttributeType: S
       KeySchema:
         - AttributeName: idReserva
           KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: LabSlotIndex
-          KeySchema:
-            - AttributeName: labFechaHora
-              KeyType: HASH
-            - AttributeName: idReserva
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
 
   # ---- Lambda: Crear reserva ----
   CrearReservaFunction:
