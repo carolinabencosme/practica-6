@@ -1,23 +1,28 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { listarPorRango } from '../services/api';
 
 function formatHora(hora) {
   return `${String(hora).padStart(2, '0')}:00 – ${String(hora + 1).padStart(2, '0')}:00`;
 }
 
+function toDateInputValue(date) {
+  return date.toISOString().slice(0, 10);
+}
+
 function lastMonth() {
   const d = new Date();
   d.setMonth(d.getMonth() - 1);
-  return d.toISOString().slice(0, 10);
+  return toDateInputValue(d);
 }
 
 function today() {
-  return new Date().toISOString().slice(0, 10);
+  return toDateInputValue(new Date());
 }
 
 export default function PastReservations() {
+  const maxFechaHasta = useMemo(() => today(), []);
   const [fechaDesde, setFechaDesde] = useState(lastMonth());
-  const [fechaHasta, setFechaHasta] = useState(today());
+  const [fechaHasta, setFechaHasta] = useState(maxFechaHasta);
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -45,7 +50,10 @@ export default function PastReservations() {
 
   return (
     <div className="card">
-      <h2>Consulta por Rango de Fechas</h2>
+      <h2>Historial de Reservas</h2>
+      <p className="helper-text">
+        Consulta únicamente reservas pasadas: fechas anteriores a hoy o reservas de hoy cuyo horario ya terminó.
+      </p>
       <form onSubmit={handleSearch} className="range-form">
         <div className="form-group">
           <label htmlFor="fechaDesde">Fecha desde *</label>
@@ -53,6 +61,7 @@ export default function PastReservations() {
             id="fechaDesde"
             type="date"
             value={fechaDesde}
+            max={fechaHasta}
             onChange={(e) => setFechaDesde(e.target.value)}
             required
           />
@@ -63,24 +72,26 @@ export default function PastReservations() {
             id="fechaHasta"
             type="date"
             value={fechaHasta}
+            min={fechaDesde}
+            max={maxFechaHasta}
             onChange={(e) => setFechaHasta(e.target.value)}
             required
           />
         </div>
         <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? 'Buscando…' : 'Buscar'}
+          {loading ? 'Buscando…' : 'Buscar historial'}
         </button>
       </form>
 
       {error && <div className="alert alert-error"><p>{error}</p></div>}
 
       {searched && !error && reservas.length === 0 && (
-        <p className="empty-state">No se encontraron reservas en ese rango de fechas.</p>
+        <p className="empty-state">No se encontraron reservas pasadas en ese rango de fechas.</p>
       )}
 
       {reservas.length > 0 && (
         <div className="table-wrapper">
-          <p className="result-count">{reservas.length} reserva(s) encontrada(s)</p>
+          <p className="result-count">{reservas.length} reserva(s) pasada(s) encontrada(s)</p>
           <table>
             <thead>
               <tr>
