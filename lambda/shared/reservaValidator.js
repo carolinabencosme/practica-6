@@ -1,5 +1,7 @@
 'use strict';
 
+const { isPastDate } = require('./dateUtils');
+
 /**
  * Validates reservation input data.
  *
@@ -40,13 +42,8 @@ function validateReserva(data, skipPastDateCheck = false) {
     errors.fecha = 'La fecha es obligatoria.';
   } else if (!/^\d{4}-\d{2}-\d{2}$/.test(data.fecha.trim())) {
     errors.fecha = 'La fecha debe tener el formato YYYY-MM-DD.';
-  } else if (!skipPastDateCheck) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const reservaDate = new Date(data.fecha.trim() + 'T00:00:00');
-    if (reservaDate < today) {
-      errors.fecha = 'No se pueden crear reservas para fechas pasadas.';
-    }
+  } else if (!skipPastDateCheck && isPastDate(data.fecha.trim())) {
+    errors.fecha = 'No se pueden crear reservas para fechas pasadas.';
   }
 
   // hora: required, integer 8–22 inclusive
