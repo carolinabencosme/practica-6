@@ -1,0 +1,135 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: "Pr\xE1ctica 6 \u2013 Gesti\xF3n de reservas de laboratorio DynamoDB\
+  \ table + Lambda functions + API Gateway with CORS\n"
+Globals:
+  Function:
+    Runtime: nodejs18.x
+    Timeout: 15
+    Environment:
+      Variables:
+        TABLE_NAME:
+          Ref: ReservasTable
+        TABLE_TZ_OFFSET: '0'
+  Api:
+    Cors:
+      AllowMethods: '''GET,POST,OPTIONS'''
+      AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
+      AllowOrigin: '''*'''
+Parameters:
+  StageName:
+    Type: String
+    Default: prod
+    Description: API Gateway stage name
+Resources:
+  ReservasTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Reservas
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+      - AttributeName: idReserva
+        AttributeType: S
+      KeySchema:
+      - AttributeName: idReserva
+        KeyType: HASH
+  CrearReservaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: crearReserva
+      CodeUri: CrearReservaFunction
+      Handler: index.handler
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: ReservasTable
+      Events:
+        PostReserva:
+          Type: Api
+          Properties:
+            Path: /reservas
+            Method: post
+            RestApiId:
+              Ref: ReservasApi
+        OptionsReserva:
+          Type: Api
+          Properties:
+            Path: /reservas
+            Method: options
+            RestApiId:
+              Ref: ReservasApi
+    Metadata:
+      SamResourceId: CrearReservaFunction
+  ListarActivasFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: listarActivas
+      CodeUri: ListarActivasFunction
+      Handler: index.handler
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: ReservasTable
+      Events:
+        GetActivas:
+          Type: Api
+          Properties:
+            Path: /reservas/activas
+            Method: get
+            RestApiId:
+              Ref: ReservasApi
+        OptionsActivas:
+          Type: Api
+          Properties:
+            Path: /reservas/activas
+            Method: options
+            RestApiId:
+              Ref: ReservasApi
+    Metadata:
+      SamResourceId: ListarActivasFunction
+  ListarPorRangoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: listarPorRango
+      CodeUri: ListarPorRangoFunction
+      Handler: index.handler
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: ReservasTable
+      Events:
+        GetRango:
+          Type: Api
+          Properties:
+            Path: /reservas/rango
+            Method: get
+            RestApiId:
+              Ref: ReservasApi
+        OptionsRango:
+          Type: Api
+          Properties:
+            Path: /reservas/rango
+            Method: options
+            RestApiId:
+              Ref: ReservasApi
+    Metadata:
+      SamResourceId: ListarPorRangoFunction
+  ReservasApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: ReservasAPI
+      StageName:
+        Ref: StageName
+Outputs:
+  ApiBaseUrl:
+    Description: Base URL of the API Gateway
+    Value:
+      Fn::Sub: https://${ReservasApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}
+    Export:
+      Name: ReservasApiBaseUrl
+  ReservasTableName:
+    Description: DynamoDB table name
+    Value:
+      Ref: ReservasTable
+    Export:
+      Name: ReservasTableName
