@@ -3,9 +3,11 @@
 const {
   ConditionalCheckFailedException,
   DynamoDBClient,
-  TransactWriteItemsCommand,
 } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient } = require('@aws-sdk/lib-dynamodb');
+const {
+  DynamoDBDocumentClient,
+  TransactWriteCommand,
+} = require('@aws-sdk/lib-dynamodb');
 const { randomUUID } = require('crypto');
 const { validateReserva } = require('./shared/reservaValidator');
 
@@ -72,53 +74,55 @@ async function createReserva(data, docClient = ddb) {
 
   try {
     await docClient.send(
-      new TransactWriteItemsCommand({
-        TransactItems: [
-          {
-            Update: {
-              TableName: TABLE_NAME,
-              Key: { idReserva: slotControlId },
-              UpdateExpression: 'SET #count = if_not_exists(#count, :zero) + :one, #itemType = if_not_exists(#itemType, :slotType), #labFechaHora = if_not_exists(#labFechaHora, :labFechaHora), #laboratorio = if_not_exists(#laboratorio, :laboratorio), #fecha = if_not_exists(#fecha, :fecha), #hora = if_not_exists(#hora, :hora), #updatedAt = :updatedAt, #createdAt = if_not_exists(#createdAt, :createdAt)',
-              ConditionExpression: 'attribute_not_exists(#count) OR #count < :maxPorSlot',
-              ExpressionAttributeNames: {
-                '#count': 'reservasCount',
-                '#itemType': 'itemType',
-                '#labFechaHora': 'labFechaHora',
-                '#laboratorio': 'laboratorio',
-                '#fecha': 'fecha',
-                '#hora': 'hora',
-                '#updatedAt': 'updatedAt',
-                '#createdAt': 'createdAt',
-              },
-              ExpressionAttributeValues: {
-                ':zero': 0,
-                ':one': 1,
-                ':maxPorSlot': MAX_POR_SLOT,
-                ':slotType': SLOT_ITEM_TYPE,
-                ':labFechaHora': labFechaHora,
-                ':laboratorio': laboratorio,
-                ':fecha': fecha,
-                ':hora': hora,
-                ':updatedAt': createdAt,
-                ':createdAt': createdAt,
+        new TransactWriteCommand({
+          TransactItems: [
+            {
+              Update: {
+                TableName: TABLE_NAME,
+                Key: { idReserva: slotControlId },
+                UpdateExpression:
+                    'SET #count = if_not_exists(#count, :zero) + :one, #itemType = if_not_exists(#itemType, :slotType), #labFechaHora = if_not_exists(#labFechaHora, :labFechaHora), #laboratorio = if_not_exists(#laboratorio, :laboratorio), #fecha = if_not_exists(#fecha, :fecha), #hora = if_not_exists(#hora, :hora), #updatedAt = :updatedAt, #createdAt = if_not_exists(#createdAt, :createdAt)',
+                ConditionExpression:
+                    'attribute_not_exists(#count) OR #count < :maxPorSlot',
+                ExpressionAttributeNames: {
+                  '#count': 'reservasCount',
+                  '#itemType': 'itemType',
+                  '#labFechaHora': 'labFechaHora',
+                  '#laboratorio': 'laboratorio',
+                  '#fecha': 'fecha',
+                  '#hora': 'hora',
+                  '#updatedAt': 'updatedAt',
+                  '#createdAt': 'createdAt',
+                },
+                ExpressionAttributeValues: {
+                  ':zero': 0,
+                  ':one': 1,
+                  ':maxPorSlot': MAX_POR_SLOT,
+                  ':slotType': SLOT_ITEM_TYPE,
+                  ':labFechaHora': labFechaHora,
+                  ':laboratorio': laboratorio,
+                  ':fecha': fecha,
+                  ':hora': hora,
+                  ':updatedAt': createdAt,
+                  ':createdAt': createdAt,
+                },
               },
             },
-          },
-          {
-            Put: {
-              TableName: TABLE_NAME,
-              Item: reservaItem,
-              ConditionExpression: 'attribute_not_exists(idReserva)',
+            {
+              Put: {
+                TableName: TABLE_NAME,
+                Item: reservaItem,
+                ConditionExpression: 'attribute_not_exists(idReserva)',
+              },
             },
-          },
-        ],
-      })
+          ],
+        })
     );
   } catch (error) {
     if (
-      error instanceof ConditionalCheckFailedException ||
-      error?.name === 'ConditionalCheckFailedException' ||
-      error?.name === 'TransactionCanceledException'
+        error instanceof ConditionalCheckFailedException ||
+        error?.name === 'ConditionalCheckFailedException' ||
+        error?.name === 'TransactionCanceledException'
     ) {
       return buildCapacityError(laboratorio, fecha, hora);
     }
@@ -163,18 +167,4 @@ exports.handler = async (event) => {
   }
 
   return createReserva(data);
-};
-
-exports._internal = {
-  buildSlotKey,
-  buildSlotControlId,
-  buildCapacityError,
-  createReserva,
-  constants: {
-    MAX_POR_SLOT,
-    RESERVA_ITEM_TYPE,
-    SLOT_CONTROL_PREFIX,
-    SLOT_ITEM_TYPE,
-    TABLE_NAME,
-  },
 };
