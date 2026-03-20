@@ -5,6 +5,7 @@ const { DynamoDBDocumentClient, ScanCommand } = require('@aws-sdk/lib-dynamodb')
 const { getDateParts, isReservaActive } = require('./shared/dateUtils');
 
 const TABLE_NAME = process.env.TABLE_NAME || 'Reservas';
+const RESERVA_ITEM_TYPE = 'RESERVA';
 
 const client = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(client);
@@ -25,19 +26,25 @@ exports.handler = async (event) => {
   const { todayStr } = reference;
 
   const result = await ddb.send(
-    new ScanCommand({
-      TableName: TABLE_NAME,
-      FilterExpression: '#fecha >= :today',
-      ExpressionAttributeNames: { '#fecha': 'fecha' },
-      ExpressionAttributeValues: { ':today': todayStr },
-    })
+      new ScanCommand({
+        TableName: TABLE_NAME,
+        FilterExpression: '#itemType = :tipoReserva AND #fecha >= :today',
+        ExpressionAttributeNames: {
+          '#itemType': 'itemType',
+          '#fecha': 'fecha',
+        },
+        ExpressionAttributeValues: {
+          ':tipoReserva': RESERVA_ITEM_TYPE,
+          ':today': todayStr,
+        },
+      })
   );
 
   const activas = (result.Items || []).filter((item) => isReservaActive(item, reference));
 
   activas.sort((a, b) => {
     if (a.fecha !== b.fecha) return a.fecha < b.fecha ? -1 : 1;
-    return a.hora - b.hora;
+    return Number(a.hora) - Number(b.hora);
   });
 
   return {
