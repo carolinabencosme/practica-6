@@ -7,7 +7,7 @@ const {
 } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient } = require('@aws-sdk/lib-dynamodb');
 const { randomUUID } = require('crypto');
-const { validateReserva } = require('../shared/reservaValidator');
+const { validateReserva } = require('./shared/reservaValidator');
 
 const TABLE_NAME = process.env.TABLE_NAME || 'Reservas';
 const MAX_POR_SLOT = 7;

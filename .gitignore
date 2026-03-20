@@ -11,3 +11,5 @@ lambda/.env
 
 # Lambda dependencies (installed during deploy)
 lambda/node_modules/
+.aws-sam/
+.idea/

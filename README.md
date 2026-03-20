@@ -11,14 +11,16 @@ Aplicación serverless para gestionar solicitudes de acceso a laboratorios unive
 ```
 practica-6/
 ├── lambda/
-│   ├── shared/
-│   │   └── reservaValidator.js   # Validaciones puras (reutilizables y testeables)
 │   ├── crearReserva/
-│   │   └── index.js              # POST /reservas
+│   │   ├── index.js              # POST /reservas
+│   │   └── shared/               # Código compartido empaquetado con la función
 │   ├── listarActivas/
-│   │   └── index.js              # GET  /reservas/activas
+│   │   ├── index.js              # GET  /reservas/activas
+│   │   └── shared/               # Utilidades de fecha empaquetadas con la función
 │   ├── listarPorRango/
-│   │   └── index.js              # GET  /reservas/rango?fechaDesde=&fechaHasta=
+│   │   ├── index.js              # GET  /reservas/rango?fechaDesde=&fechaHasta=
+│   │   └── shared/               # Utilidades de fecha empaquetadas con la función
+│   ├── shared/                   # Referencia original del código compartido
 │   ├── package.json
 │   └── template.yaml             # SAM template (DynamoDB + Lambda + API Gateway)
 ├── frontend/
@@ -105,6 +107,19 @@ Tabla **`Reservas`**
 npm install
 npm test
 ```
+
+---
+
+## Notas sobre el empaquetado SAM
+
+- Se copiaron los módulos compartidos necesarios dentro de cada `CodeUri` de SAM:
+  - `lambda/crearReserva/shared/reservaValidator.js`
+  - `lambda/crearReserva/shared/dateUtils.js`
+  - `lambda/listarActivas/shared/dateUtils.js`
+  - `lambda/listarPorRango/shared/dateUtils.js`
+- Los handlers ahora importan estos módulos con rutas locales (`./shared/...`) para que `sam build` incluya los archivos en cada artefacto desplegable.
+- El error ocurría porque `sam build` empaquetaba cada Lambda desde su carpeta `CodeUri`; los `require('../shared/...')` apuntaban a archivos fuera del paquete y no existían en `/var/task` al ejecutarse en AWS.
+- Para volver a desplegar: `cd lambda && sam build && sam deploy`.
 
 ---
 
