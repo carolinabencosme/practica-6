@@ -2,7 +2,7 @@
 
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, ScanCommand } = require('@aws-sdk/lib-dynamodb');
-const { getDateParts, isReservaPast } = require('../shared/dateUtils');
+const { getDateParts, isReservaPast } = require('./shared/dateUtils');
 
 const TABLE_NAME = process.env.TABLE_NAME || 'Reservas';
 
