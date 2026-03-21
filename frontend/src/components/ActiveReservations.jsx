@@ -36,7 +36,7 @@ export default function ActiveReservations() {
       <div className="card-header">
         <h2>Reservas Activas</h2>
         <button className="btn btn-secondary" onClick={load} disabled={loading}>
-          {loading ? 'Cargando…' : '↺ Actualizar'}
+          {loading ? 'Cargando…' : 'Actualizar'}
         </button>
       </div>
 

@@ -1,1 +1,66 @@
-/* Global resets are handled in App.css */
+/* Design tokens — naranja cálido + rosa polvo (no neón; legibles sobre oscuro) */
+:root {
+  --bg-deep: #0f0e0d;
+  --bg-mesh-1: #1a1514;
+  --bg-mesh-2: #1f1816;
+  /* Naranja: coral / terracota */
+  --accent-orange: #e07a5f;
+  --accent-orange-soft: #f0a090;
+  --accent-terra: #d4725a;
+  --accent-terra-deep: #b85a42;
+  /* Rosa: polvo / coral rosa */
+  --accent-rose: #d8909e;
+  --accent-rose-deep: #c47082;
+  --accent-blush: #c9a0a8;
+  --accent-blush-soft: #d9b8c0;
+  --accent-peach: #e8c4b0;
+  --accent-apricot: #ddb39a;
+  --surface: rgba(255, 252, 250, 0.78);
+  --surface-solid: #fffaf7;
+  --text: #2a2422;
+  --text-muted: #6b5e5a;
+  --border-soft: rgba(201, 160, 168, 0.35);
+  --glow-terra: rgba(201, 123, 99, 0.45);
+  --glow-blush: rgba(201, 160, 168, 0.25);
+  --radius-lg: 1.25rem;
+  --radius-md: 0.75rem;
+  --shadow-soft: 0 4px 24px rgba(42, 36, 34, 0.06), 0 1px 3px rgba(42, 36, 34, 0.04);
+  --shadow-lift: 0 12px 40px rgba(168, 93, 71, 0.12);
+  --font: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg-deep);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
